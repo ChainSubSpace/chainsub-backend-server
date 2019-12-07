@@ -1,0 +1,28 @@
+{
+  "connection": "default",
+  "collectionName": "blog_tag",
+  "info": {
+    "name": "tag",
+    "description": ""
+  },
+  "options": {
+    "timestamps": false
+  },
+  "attributes": {
+    "name": {
+      "maxLength": 20,
+      "required": true,
+      "unique": true,
+      "minLength": 2,
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "posts": {
+      "collection": "post",
+      "via": "tags",
+      "plugin": "blog"
+    }
+  }
+}

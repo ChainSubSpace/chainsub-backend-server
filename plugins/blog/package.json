@@ -1,0 +1,30 @@
+{
+  "name": "strapi-plugin-blog",
+  "version": "0.0.0",
+  "description": "Blogging plugin.",
+  "strapi": {
+    "name": "blog",
+    "icon": "plug",
+    "description": "Blogging plugin."
+  },
+  "dependencies": {
+    "lodash": "latest"
+  },
+  "author": {
+    "name": "n8tb1t",
+    "email": "",
+    "url": ""
+  },
+  "maintainers": [
+    {
+      "name": "n8tb1t",
+      "email": "",
+      "url": ""
+    }
+  ],
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

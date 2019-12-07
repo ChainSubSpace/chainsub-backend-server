@@ -1,0 +1,262 @@
+const {validateAddress} = require('turtlecoin-wallet-backend/dist/lib/ValidateParameters');
+const get = require('lodash/get');
+
+module.exports = {
+  definition: `
+    type Wallet {
+      type: String!
+      articleTitle: String
+      articleSlug: String
+      address: String!
+      blockHeight: Int!
+      unlockedBalance: Int
+      lockedBalance: Int
+      locked: Int
+      totalReceived: Int
+      totalSent: Int
+      _id: ID!
+      id: ID!
+      createdAt: DateTime!
+      updatedAt: DateTime!
+    }
+    
+    type WalletBalance {
+      unlockedBalance: Int
+      lockedBalance: Int
+      _id: ID!
+    }
+    
+    type UserWallets {
+      mainWalletTurtle: [Wallet]
+      articlesWalletsTurtle: [Wallet]
+    }    
+    type Transactions {
+      in: [CryptoInturtletransaction]
+    }
+    type PostData {
+      post: BlogPost
+      transactions: Transactions
+      wallet: CryptoTurtlewallet
+    }
+    
+    type WithdrawStatus {
+      status: String
+      wallet: Wallet
+    }
+    
+    type Balance {
+      turtle: Wallet
+    }
+    
+    enum TransactionType {
+      IN
+      OUT
+    }
+    
+    enum Owner {
+      USER
+      ARTICLE
+    }
+    
+    type iTransactions {
+      total: Int!
+      transactions: [CryptoInturtletransaction]
+    } 
+  `,
+  query: `
+    balance: Balance
+    postDataBySlug(slug: String!): PostData
+    wallets: UserWallets
+    transactions(type: TransactionType!, owner: Owner!, ownerId: String, start: Int!, limit: Int!): iTransactions
+  `,
+  mutation: `
+    withdraw(amount: Int!, to: String!, from: String): WithdrawStatus
+  `,
+  type: {
+    CryptoTurtlewallet: false,
+    CryptoInturtletransaction: false,
+    CryptoOutturtletransaction: false
+  },
+  resolver: {
+    Mutation: {
+      withdraw: {
+        plugin: 'crypto',
+        resolverOf: 'Crypto.withdraw',
+        resolver: async (obj, options, {context}) => {
+
+          const user = context.state.user;
+          if (!user || !user.userData.turtleWallet) return null;
+
+          const {amount, to} = options;
+
+          let articleWallet;
+
+          if (options.from) {
+            const article = await strapi.query('post', 'blog')
+              .model.findOne({slug: options.from, author: user.userData.id}).populate('turtleWallet').lean();
+
+            articleWallet = get(article, 'turtleWallet.address', null);
+
+            if (!validateAddress(articleWallet, true)) return {status: "Invalid sender address!"};
+
+          }
+
+          const from = (articleWallet) ? articleWallet : user.userData.virtualTurtleWallet;
+
+          const response = {status: null, wallet: null};
+
+          if (!validateAddress(from, true)) return {status: "Invalid sender address!"};
+          if (!validateAddress(to, true)) return {status: "Invalid recipient address!"};
+
+          const status = 'processing';
+
+          //TODO
+          // try {
+          //   data = await strapi.query('turtlewithdrawrequest', 'crypto').create({...options, from, status})
+          // } catch (error) {
+          //   console.log(error)
+          // }
+          //
+
+          const userWallet = await strapi.query('turtlewallet', 'crypto')
+            .model.findOne({address: from}).lean();
+
+          const transaction = await strapi.hook['turtle-coin'].withdraw({from, to, amount});
+          console.log(transaction);
+
+          if (transaction.error) return {status: transaction.error};
+
+          response.wallet = {
+            ...userWallet,
+            id: userWallet._id,
+            type: 'turtle',
+            unlockedBalance: transaction.unlockedBalance,
+            lockedBalance: transaction.lockedBalance,
+          };
+
+          return response
+
+        }
+      }
+    },
+    Query: {
+      transactions: {
+        plugin: 'blog',
+        resolverOf: 'Post.findOne',
+        resolver: async (obj, options, {context}) => {
+          const {type, owner, ownerId, start, limit} = options;
+
+          const entity = ((type === 'IN') ? 'in' : 'out') + 'turtletransaction';
+
+          let wallet;
+
+          // only if article has requested wallet
+          if (owner === 'ARTICLE') {
+            try {
+              const article = await strapi.query('post', 'blog')
+                .model.findOne({slug: ownerId})
+                .populate('turtleWallet', null);
+                // .populate('turtleWallet', null, {address});
+
+              wallet = article.turtleWallet.address;
+
+            } catch (error) {
+              strapi.log.error(`the wallet doesn't belong to an article`);
+              return null
+            }
+          }
+
+          // only is wallets belongs to current user
+          if (owner === 'USER') {
+            const user = context.state.user;
+            const userWallet = get(user, 'userData.virtualTurtleWallet', null);
+            if (!user || !userWallet) return null;
+
+            wallet = userWallet;
+          }
+
+          if (!validateAddress(wallet, true)) return null;
+          if (!wallet) return null;
+
+          const query = strapi.query(entity, 'crypto');
+
+          const transactions = await query
+            .find({_sort: 'createdAt:desc', _start: start, _limit: limit, wallet});
+
+          const total = await query.count({wallet});
+
+          return {total, transactions};
+        }
+      },
+      postDataBySlug: {
+        plugin: 'blog',
+        resolverOf: 'Post.findOne',
+        resolver: async (obj, options, {context}) => {
+          const postData = {post: null, transactions: null, wallet: null};
+
+          postData.post = await strapi.query('post', 'blog')
+            .model.findOneAndUpdate({slug: options.slug}, {$inc: {views: +1}}, {new: true, lean: true})
+            .populate('turtleWallet');
+
+          const wallet = get(postData, 'post.turtleWallet.address');
+
+          if (wallet && validateAddress(wallet, true)) {
+            postData.transactions = {
+              in: await strapi.query('inturtletransaction', 'crypto')
+                .find({_sort: 'createdAt:desc', wallet})
+            };
+            postData.wallet = postData.post.turtleWallet;
+          }
+
+          delete postData.post.turtleWallet;
+          return postData
+        }
+      },
+      balance: {
+        plugin: 'crypto',
+        resolverOf: 'Crypto.balance',
+        resolver: async (obj, options, {context}) => {
+          const user = context.state.user;
+          if (!user || !user.userData.turtleWallet) return null;
+
+          const id = user.userData.turtleWallet;
+
+          return {turtle: {...await strapi.query('turtlewallet', 'crypto').findOne({id}), type: 'turtle'}};
+        }
+      },
+      wallets: {
+        plugin: 'crypto',
+        resolverOf: 'Crypto.wallets',
+        resolver: async (obj, options, {context}) => {
+
+          const user = context.state.user;
+          if (!user) return null;
+
+          const wallets = {mainWalletTurtle: [], articlesWalletsTurtle: []};
+
+          const id = user.userData.id;
+
+          const author = await strapi.query('author', 'blog').findOne({id});
+
+          const type = 'turtle';
+          wallets.mainWalletTurtle.push({...author.turtleWallet, type});
+
+          wallets.articlesWalletsTurtle = await Promise.all(author.posts.map(async (post) => {
+            if (!post.turtleWallet) return null;
+
+            const wallet = await strapi.query('turtlewallet', 'crypto').findOne({id: post.turtleWallet});
+
+            wallet.type = type;
+            wallet.articleTitle = post.title;
+            wallet.articleSlug = post.slug;
+
+            return Promise.resolve(wallet);
+          }));
+
+
+          return wallets;
+        }
+      }
+    },
+  }
+};

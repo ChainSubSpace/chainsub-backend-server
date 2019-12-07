@@ -1,0 +1,15 @@
+{
+  "info": {
+    "name": "setings",
+    "description": ""
+  },
+  "connection": "default",
+  "collectionName": "groups_setings",
+  "attributes": {
+    "info": {
+      "default": "info",
+      "required": true,
+      "type": "text"
+    }
+  }
+}

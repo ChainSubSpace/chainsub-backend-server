@@ -1,0 +1,28 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "post",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "title": {
+      "minLength": 10,
+      "required": true,
+      "unique": true,
+      "maxLength": 200,
+      "type": "text"
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "author": {
+      "model": "author",
+      "via": "posts",
+      "plugin": "blog"
+    }
+  }
+}

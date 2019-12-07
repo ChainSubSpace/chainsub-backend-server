@@ -1,0 +1,23 @@
+// module.exports = {
+//   query: `
+//     userPosts: [BlogPost]
+//   `,
+//   resolver: {
+//     Query: {
+//       userPosts: {
+//         plugin: 'blog',
+//         resolverOf: 'Post.find',
+//         resolver: async (obj, options, {context}) => {
+//
+//           if (strapi.plugins['blog'].services.author.isAuthenticated(context)) {
+//             context.query = {_sort: 'createdAt:desc', _limit: 20, 'author.credentials._id': context.state.user.id};
+//             await strapi.plugins['blog'].controllers.post.find(context);
+//           }
+//
+//           return context.body;
+//
+//         }
+//       }
+//     },
+//   }
+// };

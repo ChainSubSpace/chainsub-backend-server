@@ -1,0 +1,48 @@
+{
+  "connection": "default",
+  "collectionName": "blog_author",
+  "info": {
+    "name": "author",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "about": {
+      "type": "richtext"
+    },
+    "username": {
+      "unique": true,
+      "required": true,
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "credentials": {
+      "model": "user",
+      "via": "userData",
+      "plugin": "users-permissions"
+    },
+    "virtualTurtleWallet": {
+      "type": "string"
+    },
+    "virtualEmail": {
+      "type": "string"
+    },
+    "turtleWallet": {
+      "model": "turtlewallet",
+      "plugin": "crypto",
+      "private": true
+    },
+    "posts": {
+      "collection": "post",
+      "via": "author",
+      "plugin": "blog"
+    }
+  }
+}

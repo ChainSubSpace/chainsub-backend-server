@@ -1,0 +1,42 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "inturtletransaction",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "blockHeight": {
+      "type": "integer"
+    },
+    "fee": {
+      "type": "integer"
+    },
+    "hash": {
+      "type": "string"
+    },
+    "paymentID": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "integer"
+    },
+    "unlockTime": {
+      "type": "integer"
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "wallet": {
+      "type": "string"
+    },
+    "index": {
+      "unique": true,
+      "required": true,
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "chainsub-backend-server",
+  "private": true,
+  "version": "0.0.1",
+  "description": "ChainSub Blogging platform backend.",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
+    "slugify": "^1.3.6",
+    "strapi": "3.0.0-beta.17.7",
+    "strapi-admin": "3.0.0-beta.17.7",
+    "strapi-hook-mongoose": "^3.0.0-beta.17.7",
+    "strapi-plugin-content-manager": "3.0.0-beta.17.7",
+    "strapi-plugin-content-type-builder": "3.0.0-beta.17.7",
+    "strapi-plugin-email": "3.0.0-beta.17.7",
+    "strapi-plugin-graphql": "3.0.0-beta.17.7",
+    "strapi-plugin-upload": "3.0.0-beta.17.7",
+    "strapi-plugin-users-permissions": "3.0.0-beta.17.7",
+    "strapi-utils": "3.0.0-beta.17.7",
+    "turtlecoin-crypto": "^3.1.0",
+    "turtlecoin-wallet-backend": "https://github.com/turtlecoin/turtlecoin-wallet-backend-js",
+    "uuid": "^3.3.3"
+  },
+  "author": {
+    "name": "n8tb1t"
+  },
+  "strapi": {
+    "uuid": "8e1dc066-fbd9-4ede-a864-0fb31610ba8a"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

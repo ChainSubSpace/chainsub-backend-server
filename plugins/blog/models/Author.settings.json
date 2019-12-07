@@ -1,0 +1,21 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "author",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "posts": {
+      "collection": "post",
+      "via": "author",
+      "plugin": "blog"
+    },
+    "about": {
+      "type": "richtext"
+    }
+  }
+}

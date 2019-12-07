@@ -1,0 +1,45 @@
+{
+  "connection": "default",
+  "collectionName": "crypto_turtlewithdrawrequest",
+  "info": {
+    "name": "turtlewithdrawrequest",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "from": {
+      "type": "string",
+      "required": true
+    },
+    "to": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "integer",
+      "default": "",
+      "required": true
+    },
+    "status": {
+      "enumDefault": "processing",
+      "enum": [
+        "processing",
+        "processed",
+        "failed"
+      ],
+      "type": "enumeration",
+      "required": true
+    },
+    "error": {
+      "type": "string"
+    },
+    "hash": {
+      "type": "string"
+    }
+  }
+}

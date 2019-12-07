@@ -1,0 +1,75 @@
+{
+  "connection": "default",
+  "collectionName": "blog_post",
+  "info": {
+    "name": "post",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "title": {
+      "minLength": 10,
+      "required": true,
+      "unique": true,
+      "maxLength": 200,
+      "type": "string"
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "draft": {
+      "required": true,
+      "type": "boolean",
+      "default": true
+    },
+    "slug": {
+      "type": "string"
+    },
+    "category": {
+      "model": "category",
+      "via": "posts",
+      "plugin": "blog"
+    },
+    "tags": {
+      "collection": "tag",
+      "via": "posts",
+      "dominant": true,
+      "plugin": "blog"
+    },
+    "virtualTurtleWallet": {
+      "type": "string"
+    },
+    "wordCount": {
+      "type": "integer"
+    },
+    "readingTime": {
+      "type": "integer"
+    },
+    "virtualTurtleTotalReceived": {
+      "type": "integer",
+      "default": "0"
+    },
+    "views": {
+      "type": "integer",
+      "default": "0"
+    },
+    "turtleWallet": {
+      "model": "turtlewallet",
+      "plugin": "crypto",
+      "private": true
+    },
+    "author": {
+      "model": "author",
+      "via": "posts",
+      "plugin": "blog"
+    },
+    "heroImage": {
+      "type": "string"
+    }
+  }
+}

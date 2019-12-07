@@ -1,0 +1,53 @@
+{
+  "connection": "default",
+  "collectionName": "crypto_turtlewallet",
+  "info": {
+    "name": "turtlewallet",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "address": {
+      "unique": true,
+      "required": true,
+      "type": "string"
+    },
+    "blockHeight": {
+      "type": "integer",
+      "required": true
+    },
+    "privateSpendKey": {
+      "type": "string",
+      "private": true
+    },
+    "publicSpendKey": {
+      "type": "string",
+      "private": true
+    },
+    "unlockedBalance": {
+      "type": "integer",
+      "default": "0"
+    },
+    "lockedBalance": {
+      "type": "integer",
+      "default": "0"
+    },
+    "totalReceived": {
+      "type": "integer",
+      "default": "0"
+    },
+    "totalSent": {
+      "type": "integer",
+      "default": "0"
+    },
+    "locked": {
+      "type": "integer",
+      "default": "0"
+    }
+  }
+}
