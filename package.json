@@ -14,7 +14,7 @@
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
     "slugify": "^1.3.6",
-    "strapi": "3.0.0-beta.17.7",
+    "strapi": "3.0.0-beta.17.8",
     "strapi-admin": "3.0.0-beta.17.7",
     "strapi-hook-mongoose": "^3.0.0-beta.17.7",
     "strapi-plugin-content-manager": "3.0.0-beta.17.7",
